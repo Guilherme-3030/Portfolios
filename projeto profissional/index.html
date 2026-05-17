@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack Pro | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animação suave para os resultados */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-gradient-to-r from-red-600 to-red-800 text-white shadow-lg">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wider">FitTrack Pro</h1>
+            <span class="text-sm font-medium bg-red-900/50 px-3 py-1 rounded-full">BETA</span>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <section class="bg-white rounded-xl shadow-md p-6 border border-slate-200">
+            <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                <div class="bg-slate-100 p-3 rounded-lg text-red-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">Treino A: Push (Peito, Ombro, Tríceps)</h2>
+            </div>
+            <ul class="space-y-3">
+                <li class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-lg transition">
+                    <span class="font-medium text-slate-700">Supino Reto Barra</span>
+                    <span class="text-sm bg-slate-200 text-slate-700 px-2 py-1 rounded">4 x 8-10</span>
+                </li>
+                <li class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-lg transition">
+                    <span class="font-medium text-slate-700">Desenvolvimento Halteres</span>
+                    <span class="text-sm bg-slate-200 text-slate-700 px-2 py-1 rounded">3 x 10-12</span>
+                </li>
+                <li class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-lg transition">
+                    <span class="font-medium text-slate-700">Tríceps Corda</span>
+                    <span class="text-sm bg-slate-200 text-slate-700 px-2 py-1 rounded">4 x 12-15</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-md p-6 border border-slate-200">
+            <div class="mb-6 border-b pb-4">
+                <h2 class="text-xl font-bold text-slate-800">Calculadora de Volume de Carga</h2>
+                <p class="text-sm text-slate-500 mt-1">Calcule o peso total levantado por exercício.</p>
+            </div>
+
+            <form id="calcForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Carga por lado (kg)</label>
+                    <input type="number" id="peso" required min="1" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition" placeholder="Ex: 20">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Séries</label>
+                        <input type="number" id="series" required min="1" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition" placeholder="Ex: 4">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Repetições</label>
+                        <input type="number" id="reps" required min="1" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition" placeholder="Ex: 10">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition shadow-md hover:shadow-lg mt-2">
+                    Calcular Volume Total
+                </button>
+            </form>
+
+            <div id="resultadoContainer" class="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg text-center hidden fade-in">
+                <p class="text-slate-500 text-sm mb-1">Volume Total Levantado:</p>
+                <p class="text-3xl font-black text-red-600"><span id="valorTotal">0</span> kg</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center mt-auto">
+        <p class="text-sm">Desenvolvido com HTML, Tailwind CSS e JavaScript Vanilla.</p>
+    </footer>
+
+    <script>
+        document.getElementById('calcForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita recarregar a página
+            
+            // Pega os valores dos inputs
+            const peso = parseFloat(document.getElementById('peso').value);
+            const series = parseInt(document.getElementById('series').value);
+            const reps = parseInt(document.getElementById('reps').value);
+
+            // Calcula o volume de carga: (peso * 2 lados da barra) * séries * repetições
+            const volumeTotal = (peso * 2) * series * reps;
+
+            // Exibe o resultado com animação
+            const container = document.getElementById('resultadoContainer');
+            const valorSpan = document.getElementById('valorTotal');
+            
+            valorSpan.innerText = volumeTotal.toLocaleString('pt-BR');
+            
+            container.classList.remove('hidden');
+            
+            // Pequeno truque para re-engatilhar a animação CSS
+            container.classList.remove('fade-in');
+            void container.offsetWidth; 
+            container.classList.add('fade-in');
+        });
+    </script>
+</body>
+</html>

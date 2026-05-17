@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Corporativo | Gestão de Ativos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex">
+
+    <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex">
+        <div class="p-6 border-b border-slate-800">
+            <h2 class="text-xl font-bold tracking-wide">Tech<span class="text-blue-500">Asset</span></h2>
+            <p class="text-xs text-slate-400 mt-1">Inteligência e Automação</p>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button id="btn-visao" class="w-full text-left block p-3 bg-blue-600 rounded-lg text-sm font-medium transition text-white">Visão Geral</button>
+            <button id="btn-relatorios" class="w-full text-left block p-3 hover:bg-slate-800 rounded-lg text-sm font-medium transition text-slate-300">Relatórios</button>
+            <button id="btn-configuracoes" class="w-full text-left block p-3 hover:bg-slate-800 rounded-lg text-sm font-medium transition text-slate-300">Configurações</button>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+            Versão 1.1.0
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <header class="bg-white shadow-sm border-b border-slate-200 p-4 flex justify-between items-center z-10">
+            <h1 id="titulo-pagina" class="text-xl font-semibold text-slate-800">Registro Rápido de Inventário</h1>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-slate-500">Status do Banco:</span>
+                <span class="flex items-center gap-1 text-sm text-green-600 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online
+                </span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8">
+            
+            <div id="tela-visao" class="fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-blue-500">
+                        <p class="text-sm text-slate-500 font-medium mb-1">Ativos Registrados Hoje</p>
+                        <p class="text-3xl font-bold text-slate-800" id="contadorDia">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-green-500">
+                        <p class="text-sm text-slate-500 font-medium mb-1">Sincronizados com a Planilha</p>
+                        <p class="text-3xl font-bold text-slate-800" id="contadorSync">0</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold border-b pb-3 mb-4">Novo Registro</h3>
+                        <form id="formAtivo" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Código Identificador (ID)</label>
+                                <input type="text" id="ativoId" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: BRB-9901">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Equipamento</label>
+                                <input type="text" id="ativoNome" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: Monitor Dell 24'">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Estado de Conservação</label>
+                                <select id="ativoEstado" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                    <option value="Novo">Novo</option>
+                                    <option value="Em Uso">Em Uso</option>
+                                    <option value="Necessita Reparo">Necessita Reparo</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition mt-4">
+                                Registrar Ativo
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                        <h3 class="text-lg font-semibold border-b pb-3 mb-4 flex justify-between items-center">
+                            Últimas Sincronizações
+                            <button id="limparTabela" class="text-xs text-red-500 hover:text-red-700 font-medium">Limpar Histórico</button>
+                        </h3>
+                        
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="text-sm text-slate-500 border-b border-slate-200 bg-slate-50">
+                                        <th class="p-3 font-medium rounded-tl-lg">ID</th>
+                                        <th class="p-3 font-medium">Equipamento</th>
+                                        <th class="p-3 font-medium">Estado</th>
+                                        <th class="p-3 font-medium">Hora</th>
+                                        <th class="p-3 font-medium rounded-tr-lg">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaCorpo">
+                                    <tr id="linhaVazia">
+                                        <td colspan="5" class="p-8 text-center text-slate-400 text-sm">
+                                            Nenhum ativo registrado nesta sessão.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tela-relatorios" class="hidden fade-in space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <h2 class="text-2xl font-bold text-slate-800">Módulo de Relatórios</h2>
+                    <span class="text-sm bg-blue-100 text-blue-700 py-1 px-3 rounded-full font-medium">Exportação</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4 text-slate-800">Gerar Extrato de Movimentação</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Período de Referência</label>
+                                <input type="date" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-600">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Formato do Arquivo</label>
+                                <select class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-600">
+                                    <option>Planilha Excel (.xlsx)</option>
+                                    <option>Valores Separados por Vírgula (.csv)</option>
+                                    <option>Documento PDF (.pdf)</option>
+                                </select>
+                            </div>
+                            <button type="button" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition flex justify-center items-center gap-2 mt-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Baixar Relatório
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                        <h3 class="text-lg font-semibold mb-4 text-slate-800">Resumo Mensal (Maio)</h3>
+                        <ul class="space-y-3 flex-1">
+                            <li class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                <span class="text-sm font-medium text-slate-600">Novos Equipamentos Inseridos</span>
+                                <span class="font-bold text-slate-800">142</span>
+                            </li>
+                            <li class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                <span class="text-sm font-medium text-slate-600">Equipamentos em Uso</span>
+                                <span class="font-bold text-blue-600">1.034</span>
+                            </li>
+                            <li class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                <span class="text-sm font-medium text-slate-600">Enviados para Reparo</span>
+                                <span class="font-bold text-orange-600">12</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tela-configuracoes" class="hidden fade-in space-y-6">
+                <h2 class="text-2xl font-bold text-slate-800 border-b border-slate-200 pb-4">Configurações do Sistema</h2>
+                
+                <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm max-w-3xl">
+                    <form class="space-y-6" onsubmit="event.preventDefault(); alert('Configurações salvas com sucesso!');">
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2 text-slate-800">Integração Externa (Webhooks / API)</h3>
+                            <p class="text-sm text-slate-500 mb-4">Defina o endpoint de destino para sincronização automática com seu banco de dados ou Google Sheets.</p>
+                            
+                            <label class="block text-sm font-medium text-slate-700 mb-1">URL de Destino (Endpoint)</label>
+                            <input type="url" value="https://api.empresa.com.br/v1/webhook/inventario" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-600 bg-slate-50 font-mono text-sm">
+                            
+                            <label class="block text-sm font-medium text-slate-700 mb-1 mt-4">Chave de Autenticação (Bearer Token)</label>
+                            <input type="password" value="*************************" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-600 bg-slate-50 font-mono text-sm">
+                        </div>
+                        
+                        <div class="border-t border-slate-200 pt-6">
+                            <h3 class="text-lg font-semibold mb-4 text-slate-800">Preferências de Operação</h3>
+                            
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 mb-4">
+                                <div>
+                                    <p class="font-medium text-slate-800 text-sm">Sincronização em Tempo Real</p>
+                                    <p class="text-xs text-slate-500 mt-1">Enviar os dados para a nuvem no exato momento do registro.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                  <input type="checkbox" value="" class="sr-only peer" checked>
+                                  <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                <div>
+                                    <p class="font-medium text-slate-800 text-sm">Setor / Departamento Padrão</p>
+                                    <p class="text-xs text-slate-500 mt-1">Vincular novos equipamentos automaticamente a esta área.</p>
+                                </div>
+                                <select class="border border-slate-300 rounded-lg p-2 bg-white outline-none text-sm text-slate-700">
+                                    <option>Inteligência e Automação</option>
+                                    <option>Suporte de Infraestrutura</option>
+                                    <option>Desenvolvimento de Software</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-slate-200 pt-6 flex justify-end">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition shadow-sm">
+                                Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
